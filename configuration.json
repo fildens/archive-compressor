@@ -1,0 +1,12 @@
+{
+  "host_operation_system_win": true,
+  "adobe_media_encoder_host": "http://192.168.10.11:8080",
+  "raidix_ip": "192.168.10.102",
+  "path_to_ffmpeg": "",
+  "transfer_server_host": "https://10.2.0.26:12194",
+  "scan_server_host": "https://10.2.0.30:12134",
+  "api_server_host": "https://10.2.0.20:12154",
+  "limit_files_number": 2500,
+  "destination_media_space": "ARC",
+  "temp_folder_name": "TEMP_TRANSFER"
+}
