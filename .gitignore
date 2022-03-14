@@ -1,6 +1,8 @@
 /.DS_Store
 /Thumbs.db
 /LOGS
+/__pycache__
+/.idea
 /.env
 /*.bat
 /*.cmd
