@@ -1,5 +1,5 @@
 # -*- coding: cp1251 -*-
-# version 3.4
+
 import argparse
 import json
 import logging
