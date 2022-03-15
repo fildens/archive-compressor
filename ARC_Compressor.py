@@ -20,7 +20,7 @@ import urllib3
 from peewee import *
 from requests.adapters import HTTPAdapter
 
-from logger import Logger
+from lib.logger import Logger
 
 from decouple import config, UndefinedValueError
 
@@ -252,7 +252,7 @@ def remove_wrong_paths(item):
 
 
 def restore_path(item):
-    import LegalPath
+    from lib import LegalPath
     problem_message = 'No source file for all locations'
     number_locations = len(item['data']['video'][0]['file']['locations'])
     file_size = item['data']['video'][0]['file']['file']['filesize']
