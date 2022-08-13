@@ -44,10 +44,11 @@ class Conf:
             self.auth = (self.es_user, self.es_pass)
 
             self.LimitFiles = params['limit_files_number']
-            self.MS = params['destination_media_space']
+            self.MS = params['work_media_space']
             self.AME_SRV = params['adobe_media_encoder_host']
             self.TempFolder = params['temp_folder_name']
             self.RAIDIX = params['raidix_ip']
+            self.FilesLocation = params['work_files_location']
             self.ff_path = params['path_to_ffmpeg']
             self.srv_transfer = params['transfer_server_host']
             self.srv_scan = params['scan_server_host']
@@ -70,11 +71,12 @@ class Conf:
             self.PathData = list()
             self.ProblemList = list()
 
-            self.MediaLocationWin = Path(r'\\{}\{}'.format(self.RAIDIX, self.MS))
+            # self.MediaLocationWin = Path(r'\\{}\{}'.format(self.RAIDIX, self.MS))
+            self.MediaLocationWin = Path(self.FilesLocation)
             self.MediaLocationLin = self.ScriptPath.joinpath(self.MS)
             self.MediaLocation = self.MediaLocationWin if self.os_win else self.MediaLocationLin
 
-            self.EPR = self.MediaLocation.joinpath('ARC.epr')
+            self.EPR = Path(r'\\{}\{}'.format(self.RAIDIX, 'ARC.epr'))
 
             # transfer (upload, download, delete, copy, move)
             self.s_transfer = requests.session()

@@ -366,7 +366,8 @@ def main(table_name: str):
         else:
             return
     else:
-        cache_id, results = es_search_files(date=table_name)
+        # cache_id, results = es_search_files(date=table_name)
+        cache_id, results = es_search_files(date='2020-08-12')
         time.sleep(60)
         db.create_sql_tables(table_name)
         c.ItemLength = build_search_results(cache_id)
@@ -417,7 +418,7 @@ ap.add_argument("--helper", required=False,
                 default='True',
                 help="Set helper mode. Default True. Otherwise master mode, is should be only one in system")
 ap.add_argument("--ame", required=False,
-                default='True',
+                default='False',
                 help="Use Adobe Media Encoder to transcode problem files. Default True. If not installed set False")
 try:
     args = vars(ap.parse_args())
@@ -458,3 +459,4 @@ else:
         else:
             c.AME = True
         main(current_table_name)
+# ARC_Compressor.py --helper=false --ame=true

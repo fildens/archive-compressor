@@ -89,13 +89,17 @@ class Insert:
 
             if check_mov and path_to_delete.suffix.lower() != '.mov':
                 return False
-
-            try:
-                path_to_delete.unlink()
-            except BaseException as e:
-                logging.error(
-                    '{}/{} Delete ORIG FILE FAILED\n{}\n{}'.format(self.i, self.c.ItemLength, path_to_delete, repr(e)))
-                return False
+            time.sleep(5)
+            if path_to_delete.is_file():
+                try:
+                    path_to_delete.unlink()
+                except BaseException as e:
+                    logging.error(
+                        '{}/{} Delete ORIG FILE FAILED\n{}\n{}'.format(self.i, self.c.ItemLength, path_to_delete, repr(e)))
+                    return False
+                else:
+                    logging.info('{}/{} Deleted original'.format(self.i, self.c.ItemLength))
+                    return True
             else:
                 logging.info('{}/{} Deleted original'.format(self.i, self.c.ItemLength))
                 return True
