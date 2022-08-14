@@ -294,11 +294,11 @@ def build_search_results(cache_id):
     else:
         time.sleep(1)
         data = r.json()
-        '''
-        with open(Path(log_folder).joinpath('search_{}_date_{}.json'.format(cache_id, date)), "w",
-                  encoding='utf-8') as jsonFile:
-            json.dump(data, jsonFile, indent=4, sort_keys=True, ensure_ascii=False)
-        '''
+
+        # with open(Path(log_folder).joinpath('search_{}_date_{}.json'.format(cache_id, date)), "w",
+        #           encoding='utf-8') as jsonFile:
+        #    json.dump(data, jsonFile, indent=4, sort_keys=True, ensure_ascii=False)
+
         db.proxy.connection()
         for item in data['results']:
             if db.ErrorsBase.select().where(db.ErrorsBase.clip_id == item['clip_id']) or \

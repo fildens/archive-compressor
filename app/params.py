@@ -1,14 +1,24 @@
 import json
 import logging
 import os
+import ssl
 import sys
 from multiprocessing import Queue
 from pathlib import Path
-from requests.adapters import HTTPAdapter
-from decouple import UndefinedValueError, AutoConfig
-from peewee import *
 
 import requests
+from decouple import UndefinedValueError, AutoConfig
+from peewee import *
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
+
+
+class Tls12HttpAdapter(HTTPAdapter):
+
+    def init_poolmanager(self, connections, maxsize, block=False):
+        self.poolmanager = PoolManager(
+            num_pools=connections, maxsize=maxsize,
+            block=block, ssl_version=ssl.PROTOCOL_TLSv1)
 
 
 class Conf:
@@ -82,19 +92,19 @@ class Conf:
             self.s_transfer = requests.session()
             self.s_transfer.auth = self.auth
             self.s_transfer.verify = False
-            self.s_transfer.mount(self.srv_transfer, HTTPAdapter(max_retries=10))
+            self.s_transfer.mount(self.srv_transfer, Tls12HttpAdapter())
 
             # scan only
             self.s_scan = requests.session()
             self.s_scan.auth = self.auth
             self.s_scan.verify = False
-            self.s_scan.mount(self.srv_scan, HTTPAdapter(max_retries=2))
+            self.s_scan.mount(self.srv_scan, Tls12HttpAdapter())
 
             # search, files, clips, meta, sequence, project, users
             self.s_api = requests.session()
             self.s_api.auth = self.auth
             self.s_api.verify = False
-            self.s_api.mount(self.srv_api, HTTPAdapter(max_retries=2))
+            self.s_api.mount(self.srv_api, Tls12HttpAdapter())
 
             self.HELPER_MODE = True
             self.AME = False

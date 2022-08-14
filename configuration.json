@@ -8,6 +8,6 @@
   "api_server_host": "https://10.2.0.20:12154",
   "limit_files_number": 2500,
   "work_media_space": "ARCHIVE",
-  "work_files_location": "\\\\10.2.0.1\\archive_1",
+  "work_files_location": "R:\\",
   "temp_folder_name": "TEMP_TRANSFER"
 }
