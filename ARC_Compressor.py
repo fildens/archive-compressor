@@ -367,7 +367,7 @@ def main(table_name: str):
             return
     else:
         # cache_id, results = es_search_files(date=table_name)
-        cache_id, results = es_search_files(date='2020-08-12')
+        cache_id, results = es_search_files(date='2021-08-12')
         time.sleep(60)
         db.create_sql_tables(table_name)
         c.ItemLength = build_search_results(cache_id)
@@ -441,6 +441,7 @@ if c.AME:
 
 last_table_name = sorted(db.proxy.get_tables(), reverse=True)[0]
 current_table_name = datetime.strftime(datetime.now(), '%Y-%m-%d')
+# last_table_name = current_table_name = '2022-08-17'
 
 if last_table_name == current_table_name:
     c.HELPER_MODE = True

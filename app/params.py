@@ -13,7 +13,7 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
 
 
-class Tls12HttpAdapter(HTTPAdapter):
+class TlsAdapter(HTTPAdapter):
 
     def init_poolmanager(self, connections, maxsize, block=False):
         self.poolmanager = PoolManager(
@@ -86,25 +86,25 @@ class Conf:
             self.MediaLocationLin = self.ScriptPath.joinpath(self.MS)
             self.MediaLocation = self.MediaLocationWin if self.os_win else self.MediaLocationLin
 
-            self.EPR = Path(r'\\{}\{}'.format(self.RAIDIX, 'ARC.epr'))
+            self.EPR = Path(rf'\\{self.RAIDIX}\ARC\ARC.epr')
 
             # transfer (upload, download, delete, copy, move)
             self.s_transfer = requests.session()
             self.s_transfer.auth = self.auth
             self.s_transfer.verify = False
-            self.s_transfer.mount(self.srv_transfer, Tls12HttpAdapter())
+            self.s_transfer.mount(self.srv_transfer, TlsAdapter())
 
             # scan only
             self.s_scan = requests.session()
             self.s_scan.auth = self.auth
             self.s_scan.verify = False
-            self.s_scan.mount(self.srv_scan, Tls12HttpAdapter())
+            self.s_scan.mount(self.srv_scan, TlsAdapter())
 
             # search, files, clips, meta, sequence, project, users
             self.s_api = requests.session()
             self.s_api.auth = self.auth
             self.s_api.verify = False
-            self.s_api.mount(self.srv_api, Tls12HttpAdapter())
+            self.s_api.mount(self.srv_api, TlsAdapter())
 
             self.HELPER_MODE = True
             self.AME = False
