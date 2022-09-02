@@ -7,9 +7,9 @@ import time
 from datetime import datetime
 from pathlib import Path
 import shlex
-from app import models as db
+from . import models as db
 import requests
-from app.communication import Msg
+from .communication import Msg
 
 
 class Transcode:
@@ -85,21 +85,6 @@ class Transcode:
             logging.info('{}/{} Number of audio streams = {}'.format(self.i, self.c.ItemLength, a_streams))
             return int(a_streams)
 
-    def is_multi_audio_old(self, file):
-        chk_string = '{}ffprobe -v quiet -select_streams a {} ' \
-                     '-show_entries stream=index -of compact=p=0:nk=1'.format(self.c.ff_path, shlex.quote(str(file)))
-        _args = shlex.split(chk_string)
-        try:
-            p = subprocess.run(_args, capture_output=True, universal_newlines=True)
-            streams = p.stdout.splitlines()
-            unique = [x for j, x in enumerate(streams) if j == streams.index(x) and x != '']
-        except BaseException as e:
-            logging.error('Can`t check audio channels: {}'.format(repr(e)))
-            return -1
-        else:
-            logging.info('{}/{} Number of audio streams = {}'.format(self.i, self.c.ItemLength, len(unique)))
-            return len(unique)
-
     def is_same_length(self, orig_file, done_file, es_duration) -> bool:
         files = [orig_file, done_file]
         length = [es_duration, 0]
@@ -111,7 +96,9 @@ class Transcode:
                 try:
                     p = subprocess.run(_args, capture_output=True)
                     streams = json.loads(p.stdout)
-                    duration = list(filter(lambda x: x['codec_type'] == 'video', streams['streams']))[0]['duration']
+                    duration = \
+                    list(filter(lambda x: x['codec_type'] == 'video', streams.get('streams', list(dict(duration=0)))))[
+                        0]['duration']
                 except BaseException as e:
                     logging.error('Can`t detect duration for {}\n error: {}'.format(file, repr(e)))
                 else:

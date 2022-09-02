@@ -19,8 +19,8 @@ from app.communication import Msg
 from app.insert import Insert
 from app.params import Conf
 from app.transcode import Transcode
-from lib.logger import Logger
-
+from extlib.logger import Logger
+from extlib import LegalPath
 
 c = Conf()
 m = Msg(c)
@@ -85,7 +85,6 @@ def remove_wrong_paths(item):
 
 
 def restore_path(item):
-    from lib import LegalPath
     problem_message = 'No source file for all locations'
     number_locations = len(item['data']['video'][0]['file']['locations'])
     file_size = item['data']['video'][0]['file']['file']['filesize']
@@ -437,7 +436,7 @@ if c.AME:
         logging.warning('AME Server offline, set AME=False')
         c.AME = False
 
-# change_table('in_work', False, '2021-09-30')
+# change_table('in_work', False, '2022-08-31')
 
 last_table_name = sorted(db.proxy.get_tables(), reverse=True)[0]
 current_table_name = datetime.strftime(datetime.now(), '%Y-%m-%d')

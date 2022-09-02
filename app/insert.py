@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from app import models as db
+from . import models as db
 
 
 class Insert:
@@ -99,7 +99,6 @@ class Insert:
             else:
                 logging.info('{}/{} Deleted original'.format(self.i, self.c.ItemLength))
                 return True
-
 
     def physical_copy_files(self, src_location, dst_location):
         if self.query.file_copy:

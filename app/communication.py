@@ -1,7 +1,7 @@
 import logging
 import time
 
-from app import models as db
+from . import models as db
 
 
 class Msg:
