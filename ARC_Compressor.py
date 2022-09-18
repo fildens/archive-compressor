@@ -64,7 +64,7 @@ def remove_wrong_paths(item):
             if input_file.stat().st_size < 10:
                 logging.critical('Less 10 bytes for {} clip_id={}'.format(input_file, clip_id))
             else:
-                es_orig_size = int(item['data']['video'][0]['file']['file']['filesize'])
+                es_orig_size = int(item['data']['video'][0]['file']['file'].get('filesize', 0))
                 ch_orig_size = input_file.stat().st_size
 
                 if abs(es_orig_size - ch_orig_size) > es_orig_size / 20:
@@ -87,7 +87,7 @@ def remove_wrong_paths(item):
 def restore_path(item):
     problem_message = 'No source file for all locations'
     number_locations = len(item['data']['video'][0]['file']['locations'])
-    file_size = item['data']['video'][0]['file']['file']['filesize']
+    file_size = item['data']['video'][0]['file']['file'].get('filesize', 0)
     list_userpaths = list()
     for j in range(number_locations):
         location = item['data']['video'][0]['file']['locations'].pop(0)
@@ -304,7 +304,7 @@ def build_search_results(cache_id):
                     'Offline' in item['data']['video'][0]['file']['status_text']:
                 pass
             else:
-                orig_size = int(item['data']['video'][0]['file']['file']['filesize'])
+                orig_size = int(item['data']['video'][0]['file']['file'].get('filesize', 0))
                 clip_id = item['clip_id']
                 duration = parse_duration(item['data']['video'][0]['timecode_duration'])
                 captured = item['data']['metadata']['captured']
