@@ -252,6 +252,58 @@ def es_search_files(date):
             }
         ]
     }
+    data = {
+        "combine": "MATCH_ALL",
+        "filters": [
+            {
+                "field": {
+                    "custom_field": "field_5",
+                    "fixed_field": "CUSTOM_field_5",
+                    "group": "SEARCH_ASSETS",
+                    "type": "QString"
+                },
+                "match": "EQUAL_TO",
+                "search": "SkyLark"
+            },
+            {
+                "field": {
+                    "fixed_field": "CAPTURED",
+                    "group": "SEARCH_FILES",
+                    "type": "QDate"
+                },
+                "match": "LESS_THAN",
+                "search": "2022-01-01"
+            },
+            {
+                "field": {
+                    "custom_field": "field_13",
+                    "fixed_field": "CUSTOM_field_13",
+                    "group": "SEARCH_ASSETS",
+                    "type": "QString"
+                },
+                "match": "EQUAL_TO",
+                "search": "¿–’»¬»–Œ¬¿“‹"
+            },
+            {
+                "field": {
+                    "fixed_field": "FILE_EXT",
+                    "group": "SEARCH_FILES",
+                    "type": "QString"
+                },
+                "match": "EQUAL_TO",
+                "search": "mxf"
+            },
+            {
+                "field": {
+                    "fixed_field": "MEDIA_SPACES_NAMES",
+                    "group": "SEARCH_FILES",
+                    "type": "QString"
+                },
+                "match": "EQUAL_TO",
+                "search": "ARCHIVE"
+            }
+        ]
+    }
     try:
         r = c.s_api.post(url, json=data, timeout=300)
         r.raise_for_status()
@@ -283,10 +335,11 @@ def build_search_results(cache_id):
             dur = int(dur_list[0]) * 3600 + int(dur_list[1]) * 60 + int(dur_list[2]) + int(dur_list[3]) / fps
         return dur
 
-    url = '{}/search/cached'.format(c.srv_api)
+    url = f'{c.srv_api}/search/cached'
     try:
-        r = c.s_api.get('{}/{}?start=0&max_results={}'.format(url, cache_id, c.LimitFiles), timeout=60)
+        r = c.s_api.get(f'{url}/{cache_id}?start=0&max_results={c.LimitFiles}', timeout=60)
         r.raise_for_status()
+        c.s_api.delete(f'{url}/{cache_id}', timeout=60)
     except BaseException as e:
         logging.error('Get cached search request error: {}'.format(repr(e)))
         return 0
@@ -413,22 +466,20 @@ all_done = False
 db.proxy.connection()
 
 # Add the arguments to the parser
-ap.add_argument("--helper", required=False,
-                default='True',
-                help="Set helper mode. Default True. Otherwise master mode, is should be only one in system")
-ap.add_argument("--ame", required=False,
-                default='False',
-                help="Use Adobe Media Encoder to transcode problem files. Default True. If not installed set False")
+ap.add_argument("--main", default=False,
+                action='store_true', required=False,
+                help="Set MAIN mode. It should be only one in system! Default False - HELPER mode.")
+ap.add_argument("--ame", default=False,
+                action='store_true', required=False,
+                help="Use Adobe Media Encoder to transcode problem files. Default False. If not installed set False")
 try:
     args = vars(ap.parse_args())
-except BaseException as er:
-    logging.error(er)
+except BaseException as e:
+    logging.error(e)
     ap.print_help()
     sys.exit(1)
 else:
-    c.HELPER_MODE = args['helper'].lower() in ['true', '1', 'yes']
-    c.AME = args['ame'].lower() in ['true', '1', 'yes']
-
+    c.HELPER_MODE, c.AME = not args['main'], args['ame']
 if c.AME:
     try:
         requests.get('{}/server'.format(c.AME_SRV))
@@ -459,4 +510,5 @@ else:
         else:
             c.AME = True
         main(current_table_name)
-# ARC_Compressor.py --helper=false --ame=true
+# ARC_Compressor.py --main --ame
+# it set helper=False and ame=True

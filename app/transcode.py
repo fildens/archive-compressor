@@ -96,11 +96,11 @@ class Transcode:
                 try:
                     p = subprocess.run(_args, capture_output=True)
                     streams = json.loads(p.stdout)
-                    duration = \
-                    list(filter(lambda x: x['codec_type'] == 'video', streams.get('streams', list(dict(duration=0)))))[
-                        0]['duration']
+                    duration = list(filter(lambda x: x['codec_type'] == 'video',
+                                           streams.get('streams', list(dict(duration=0)))))[0]['duration']
                 except BaseException as e:
-                    logging.error('Can`t detect duration for {}\n error: {}'.format(file, repr(e)))
+                    witch = 'converted' if j else 'original'
+                    logging.warning(f'Can`t detect duration for {witch} {file}\n{repr(e)}')
                 else:
                     length[j] = float(duration)
 
@@ -176,8 +176,8 @@ class Transcode:
 
         def build_xml(source_path, dst_path):
             from lxml import etree
-            source_path = self.c.MediaLocationWin.joinpath(source_path)
-            dst_path = self.c.MediaLocationWin.joinpath(dst_path)
+            source_path = self.c.MediaLocation.joinpath(source_path)
+            dst_path = self.c.MediaLocation.joinpath(dst_path)
             root = etree.Element('manifest')
             root.attrib['version'] = '1.0'
             source = etree.SubElement(root, 'SourceFilePath')

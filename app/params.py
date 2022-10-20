@@ -14,7 +14,6 @@ from requests.packages.urllib3.poolmanager import PoolManager
 
 
 class TlsAdapter(HTTPAdapter):
-
     def init_poolmanager(self, connections, maxsize, block=False):
         self.poolmanager = PoolManager(
             num_pools=connections, maxsize=maxsize,
@@ -57,7 +56,6 @@ class Conf:
             self.MS = params['work_media_space']
             self.AME_SRV = params['adobe_media_encoder_host']
             self.TempFolder = params['temp_folder_name']
-            self.RAIDIX = params['raidix_ip']
             self.FilesLocation = params['work_files_location']
             self.ff_path = params['path_to_ffmpeg']
             self.srv_transfer = params['transfer_server_host']
@@ -81,12 +79,9 @@ class Conf:
             self.PathData = list()
             self.ProblemList = list()
 
-            # self.MediaLocationWin = Path(r'\\{}\{}'.format(self.RAIDIX, self.MS))
-            self.MediaLocationWin = Path(self.FilesLocation)
-            self.MediaLocationLin = self.ScriptPath.joinpath(self.MS)
-            self.MediaLocation = self.MediaLocationWin if self.os_win else self.MediaLocationLin
+            self.MediaLocation = Path(self.FilesLocation)
 
-            self.EPR = Path(rf'\\{self.RAIDIX}\ARC\ARC.epr')
+            self.EPR = Path(self.ScriptPath, 'ARC.epr')
 
             # transfer (upload, download, delete, copy, move)
             self.s_transfer = requests.session()
