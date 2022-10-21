@@ -43,7 +43,7 @@ def excepthook(type_, value, traceback):
     errmsg = ''.join(format_exception(type_, value, traceback))
     logging.error(errmsg)
     dtn = datetime.now().strftime('%d.%m.%Y_%H:%M')
-    message = '{}\n--------------{}--------------\n{}\n\n'.format(dtn, c.ScriptName, errmsg)
+    message = f'{dtn}\n--------------{c.ScriptName}--------------\n{errmsg}\n\n'
     c.Q.put([{'END'}, 666])
     m.sendmail(message, 'ERROR')
     m.prepare_report()
@@ -54,7 +54,7 @@ def remove_wrong_paths(item):
     number_locations = len(item['data']['video'][0]['file']['locations'])
     clip_id = item['clip_id']
     if number_locations > 1:
-        logging.warning('Found more then ONE LOCATIONS for filename {}'.format(item['data']['display_name']))
+        logging.warning(f"Found more then ONE LOCATIONS for filename {item['data']['display_name']}")
     userpath_real = ''
     for j in range(number_locations):
         location = item['data']['video'][0]['file']['locations'].pop(0)
@@ -62,22 +62,20 @@ def remove_wrong_paths(item):
         input_file = c.MediaLocation.joinpath(userpath)
         if input_file.exists():
             if input_file.stat().st_size < 10:
-                logging.critical('Less 10 bytes for {} clip_id={}'.format(input_file, clip_id))
+                logging.critical(f'Less 10 bytes for {input_file} clip_id={clip_id}')
             else:
                 es_orig_size = int(item['data']['video'][0]['file']['file'].get('filesize', 0))
                 ch_orig_size = input_file.stat().st_size
 
                 if abs(es_orig_size - ch_orig_size) > es_orig_size / 20:
                     logging.warning(
-                        'ORIG FILE HAVE WRONG SIZE:'
-                        '\nES_Size={}\nStat_Size={}\nDifference={}'.format(
-                            es_orig_size,
-                            ch_orig_size,
-                            abs(es_orig_size - ch_orig_size)))
+                        f'ORIG FILE HAVE WRONG SIZE:'
+                        f'\nES_Size={es_orig_size}\nStat_Size={ch_orig_size}\n'
+                        f'Difference={abs(es_orig_size - ch_orig_size)}')
                 item['data']['video'][0]['file']['locations'].append(location)
                 userpath_real = userpath
         else:
-            logging.warning('REMOVED wrong path {}'.format(location['userpath']))
+            logging.warning(f"REMOVED wrong path {location['userpath']}")
     if len(item['data']['video'][0]['file']['locations']) == 0:
         return {}, '', ''
     else:
@@ -95,7 +93,7 @@ def restore_path(item):
         input_file = c.MediaLocation.joinpath(location['userpath'])
         if os.path.split(input_file.parent)[1] in [c.MS, '']:
             return False
-        logging.info('Try to restore {}'.format(input_file))
+        logging.info(f'Try to restore {input_file}')
         userpath = Path(location['userpath'])
         if input_file.exists() and input_file.stat().st_size < 10:
             problem_message = 'File size < 10 bytes'
@@ -104,15 +102,13 @@ def restore_path(item):
             new_path = Path(LegalPath.make(path=str(old_path)))
 
             if db.PathsBase.select().where(db.PathsBase.old_path == str(old_path)).exists():
-                logging.info('{} Already in PathBase'.format(userpath))
+                logging.info(f'{userpath} Already in PathBase')
             else:
                 physics_path = physical_search_files(userpath, file_size)
                 if physics_path:
                     db.PathsBase.create(old_path=str(old_path), physics_path=str(physics_path), new_path=str(new_path))
-                    logging.info(
-                        'Path SUCCESSFUL restored\nold_path: {}\nphysics_path: {}\nnew_path: {}'.format(old_path,
-                                                                                                        physics_path,
-                                                                                                        new_path))
+                    logging.info(f'Path SUCCESSFUL restored\nold_path: {old_path}\n'
+                                 f'physics_path: {physics_path}\nnew_path: {new_path}')
                     item['data']['video'][0]['file']['locations'] = []
                     item['data']['video'][0]['file']['locations'].append(location)
                     return item, userpath, problem_message
@@ -129,9 +125,9 @@ def physical_search_files(userpath, file_size):
         else:
             break
     try:
-        list_of_files = glob('{}/**/{}'.format(c.MediaLocation.joinpath(path), file_name))
-    except BaseException as e:
-        logging.error('Can`t find files. glob.glob error: {}'.format(repr(e)))
+        list_of_files = glob(f'{c.MediaLocation.joinpath(path)}/**/{file_name}')
+    except BaseException as e_:
+        logging.error(f'Can`t find files. glob.glob error: {repr(e_)}')
         list_of_files = []
     if len(list_of_files) == 0:
         logging.error('NO FILES Found !!!')
@@ -139,7 +135,7 @@ def physical_search_files(userpath, file_size):
     if len(list_of_files) == 1:
         path = Path(list_of_files[0])
     else:
-        logging.warning('Found more then 1 file!!!\n{}'.format(list_of_files))
+        logging.warning(f'Found more then 1 file!!!\n{list_of_files}')
         for file in list_of_files:
             if abs(int(Path(file).stat().st_size) - file_size) < 10:
                 path = file
@@ -157,7 +153,7 @@ def es_copy_file(item, file_id, dst_file):
                    total_files_complete=0,
                    total_files_failed=0,
                    total_transfer_size=0)
-    url = '{}}/transfer/copy'.format(c.srv_transfer)
+    url = f'{c.srv_transfer}/transfer/copy'
     body = {
         "source_file_id": file_id,
         "destination_mediaspace": c.MS,
@@ -174,19 +170,19 @@ def es_copy_file(item, file_id, dst_file):
     try:
         r = c.s_transfer.post(url, json=payload, timeout=600)
         r.raise_for_status()
-    except BaseException as e:
-        logging.error('Request "COPY" failed for {}. Error: {}'.format(item, repr(e)))
+    except BaseException as e__:
+        logging.error(f'Request "COPY" failed for {item}. Error: {repr(e__)}')
     else:
         time.sleep(1)
         transfer_id = r.json()[0]['transfer']
-        logging.info('Transfer_id={}'.format(transfer_id))
+        logging.info(f'Transfer_id={transfer_id}')
         state, complete = None, None
         for i in range(600):
             try:
-                r = c.s_transfer.get('{}/{}'.format(url, transfer_id), timeout=10)
+                r = c.s_transfer.get(f'{url}/{transfer_id}', timeout=10)
                 r.raise_for_status()
-            except BaseException as e:
-                logging.error('Failed to get COPY status for {}. Error: {}'.format(transfer_id, repr(e)))
+            except BaseException as e_:
+                logging.error(f'Failed to get COPY status for {transfer_id}. Error: {repr(e_)}')
                 return
             else:
                 time.sleep(1)
@@ -194,23 +190,23 @@ def es_copy_file(item, file_id, dst_file):
                 if state != data['operation_status']:
                     state = data['operation_status']
                     if state == 'Complete':
-                        logging.info('Successful COPY for "{}" '.format(transfer_id))
+                        logging.info(f'Successful COPY for "{transfer_id}"')
                         return True
                     elif state == 'Failed':
-                        logging.warning('Failed COPY for "{}".'.format(transfer_id))
+                        logging.warning(f'Failed COPY for "{transfer_id}"')
                         return
                     elif state == 'Running':
-                        logging.info('COPY in process "{}" for {}'.format(state, transfer_id))
+                        logging.info(f'COPY in process "{state}" for {transfer_id}')
                     else:
-                        logging.error('Unknown state: {} for {}'.format(state, transfer_id))
+                        logging.error(f'Unknown state: {state} for {transfer_id}')
                         logging.debug(data)
                         return
             time.sleep(10)
-        logging.warning('Waiting time is over 10 min for {}'.format(transfer_id))
+        logging.warning(f'Waiting time is over 10 min for {transfer_id}')
 
 
 def es_search_files(date):
-    url = '{}/search/cached'.format(c.srv_api)
+    url = f'{c.srv_api}/search'
     data = {
         "combine": "MATCH_ALL",
         "filters": [
@@ -307,23 +303,16 @@ def es_search_files(date):
     try:
         r = c.s_api.post(url, json=data, timeout=300)
         r.raise_for_status()
-    except BaseException as e:
-        logging.error('Search request error: {}'.format(repr(e)))
+    except BaseException as e_:
+        logging.error(f'Search request error: {repr(e_)}')
         return '', 0
     else:
-        time.sleep(1)
-        try:
-            cache_id = r.json()['cache_id']
-            results = r.json()['results']
-        except BaseException as e:
-            logging.error(repr(e))
-            logging.error('NO FILES For DATE less then {} '.format(date))
-            return '', 0
-        logging.info('For {} got data {}'.format(date, r.json()))
-        return cache_id, int(results)
+        clip_ids = [_['clip_id'] for _ in r.json()[:c.LimitFiles]]
+        logging.info(f'For {date} found {len(r.json())} files')
+        return clip_ids, len(r.json())
 
 
-def build_search_results(cache_id):
+def build_search_results(clip_ids):
     def parse_duration(dur):
         dur_list = dur.split(':')
         try:
@@ -335,24 +324,17 @@ def build_search_results(cache_id):
             dur = int(dur_list[0]) * 3600 + int(dur_list[1]) * 60 + int(dur_list[2]) + int(dur_list[3]) / fps
         return dur
 
-    url = f'{c.srv_api}/search/cached'
-    try:
-        r = c.s_api.get(f'{url}/{cache_id}?start=0&max_results={c.LimitFiles}', timeout=60)
-        r.raise_for_status()
-        c.s_api.delete(f'{url}/{cache_id}', timeout=60)
-    except BaseException as e:
-        logging.error('Get cached search request error: {}'.format(repr(e)))
-        return 0
-    else:
-        time.sleep(1)
-        data = r.json()
+    db.proxy.connection()
+    for clip_id in clip_ids:
+        time.sleep(0.5)
+        try:
+            r = c.s_api.get(f'{c.srv_api}/clips/{clip_id}', timeout=5)
+            r.raise_for_status()
+        except BaseException as e__:
+            logging.error(f'Get cached search request error: {repr(e__)}')
+        else:
+            item = dict(clip_id=clip_id, data=r.json())
 
-        # with open(Path(log_folder).joinpath('search_{}_date_{}.json'.format(cache_id, date)), "w",
-        #           encoding='utf-8') as jsonFile:
-        #    json.dump(data, jsonFile, indent=4, sort_keys=True, ensure_ascii=False)
-
-        db.proxy.connection()
-        for item in data['results']:
             if db.ErrorsBase.select().where(db.ErrorsBase.clip_id == item['clip_id']) or \
                     'Offline' in item['data']['video'][0]['file']['status_text']:
                 pass
@@ -370,7 +352,7 @@ def build_search_results(cache_id):
                     item['data']['video'][0]['file']['locations'] = item['data']['video'][0]['file']['gone_locations']
 
                 if len(json.dumps(item, indent=4, sort_keys=True, ensure_ascii=False).encode('utf-8')) >= 65535:
-                    logging.critical('BIG DATA FOR clip_id={}'.format(clip_id))
+                    logging.critical(f'BIG DATA FOR clip_id={clip_id}')
                     if not db.ErrorsBase.select().where(db.ErrorsBase.clip_id == clip_id):
                         db.ErrorsBase.create(orig_size=orig_size, item={}, clip_id=clip_id, duration=duration,
                                              userpath=userpath, captured=captured, problem='BIG DATA')
@@ -385,20 +367,19 @@ def build_search_results(cache_id):
                             db.ReportBase.create(orig_size=orig_size, item=new_item, clip_id=clip_id, duration=duration,
                                                  userpath=str(new_userpath), captured=captured)
                         else:
-                            logging.critical('clip_id={}. No source files for all locations !!!'.format(clip_id))
+                            logging.critical(f'clip_id={clip_id}. No source files for all locations !!!')
                             if not db.ErrorsBase.select().where(db.ErrorsBase.clip_id == clip_id):
                                 db.ErrorsBase.create(item=item, clip_id=clip_id,
                                                      userpath=userpath,
-                                                     problem='{} {}'.format(e1, e2))
-        return db.ReportBase.select().count()
+                                                     problem=f'{e1} {e2}')
+    return db.ReportBase.select().count()
 
 
 def change_table(field, value, table_name=None):
     if table_name is not None:
         db.ReportBase._meta.table_name = table_name
     number = db.ReportBase.update({field: value}).execute()
-    logging.warning(
-        'Table {} changed.\n{} rows for field "{}" changed to "{}"'.format(table_name, number, field, value))
+    logging.warning(f'Table {table_name} changed.\n{number} rows for field "{field}" changed to "{value}"')
 
 
 def main(table_name: str):
@@ -413,18 +394,16 @@ def main(table_name: str):
                                              ~db.ReportBase.scan)
         if query.exists():
             c.ItemLength = db.ReportBase.select().count()
-            message = 'HELPER MODE, AME={} on {}\nFor {} found {} files\n{} UNDONE'.format(c.AME, host, table_name,
-                                                                                           c.ItemLength, len(query))
+            message = f'HELPER MODE, AME={c.AME} on {host}\n' \
+                      f'For {table_name} found {c.ItemLength} files\n{len(query)} UNDONE'
         else:
             return
     else:
         # cache_id, results = es_search_files(date=table_name)
-        cache_id, results = es_search_files(date='2021-08-12')
-        time.sleep(60)
+        clip_ids, results = es_search_files(date='2021-08-12')
         db.create_sql_tables(table_name)
-        c.ItemLength = build_search_results(cache_id)
-        message = 'MAIN MODE on {}\nFor Date {} found {} files\nCache_id {}'.format(host, table_name, c.ItemLength,
-                                                                                    cache_id)
+        c.ItemLength = build_search_results(clip_ids)
+        message = f'MAIN MODE on {host}\nFor Date {table_name} found {c.ItemLength} files'
 
     m.sendmail(message=message, subject='START')
     logging.info(message)
@@ -456,7 +435,7 @@ def main(table_name: str):
                                          db.ReportBase.scan)
     err_list = [x.clip_id for x in query]
     eb = db.ErrorsBase.delete().where(db.ErrorsBase.clip_id.in_(err_list)).execute()
-    logging.info('Repaired {} rows from db.ErrorsBase'.format(eb))
+    logging.info(f'Repaired {eb} rows from db.ErrorsBase')
     db.proxy.close()
     return pr
 
@@ -466,7 +445,7 @@ all_done = False
 db.proxy.connection()
 
 # Add the arguments to the parser
-ap.add_argument("--main", default=False,
+ap.add_argument("--main", default=True,
                 action='store_true', required=False,
                 help="Set MAIN mode. It should be only one in system! Default False - HELPER mode.")
 ap.add_argument("--ame", default=False,
@@ -482,7 +461,7 @@ else:
     c.HELPER_MODE, c.AME = not args['main'], args['ame']
 if c.AME:
     try:
-        requests.get('{}/server'.format(c.AME_SRV))
+        requests.get(f'{c.AME_SRV}/server')
     except requests.exceptions.ConnectionError:
         logging.warning('AME Server offline, set AME=False')
         c.AME = False
@@ -503,7 +482,7 @@ else:
     if not all_done and not c.stop_service:
         c.HELPER_MODE = True
         try:
-            requests.get('{}/server'.format(c.AME_SRV))
+            requests.get(f'{c.AME_SRV}/server')
         except requests.exceptions.ConnectionError:
             logging.warning('AME Server offline, set AME=False')
             c.AME = False
