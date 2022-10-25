@@ -72,7 +72,7 @@ class Transcode:
         db.proxy.close()
 
     def is_multi_audio(self, file):
-        chk_string = 'ffprobe -v quiet -print_format json -show_streams {}'.format(shlex.quote(str(file)))
+        chk_string = '{} -v quiet -print_format json -show_streams {}'.format(self.c.ffp_path, shlex.quote(str(file)))
         _args = shlex.split(chk_string)
         try:
             p = subprocess.run(_args, capture_output=True)
@@ -91,7 +91,7 @@ class Transcode:
         for j in range(2):
             file = files[j]
             if file.exists():
-                chk_string = 'ffprobe -v quiet -print_format json -show_streams {}'.format(shlex.quote(str(file)))
+                chk_string = '{} -v quiet -print_format json -show_streams {}'.format(self.c.ffp_path, shlex.quote(str(file)))
                 _args = shlex.split(chk_string)
                 try:
                     p = subprocess.run(_args, capture_output=True)
@@ -246,9 +246,9 @@ class Transcode:
                                duration_seconds):
             logging.info('{}/{} AME Transcoding SUCCESSFUL'.format(self.i, self.c.ItemLength))
 
-            encoder_string = '{}ffmpeg -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
+            encoder_string = '{} -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
                              '-gop_timecode {} -metadata creation_time={} -metadata timecode={} ' \
-                             '-y -f mov {}'.format(self.c.ff_path,
+                             '-y -f mov {}'.format(self.c.ffm_path,
                                                    shlex.quote(str(self.c.MediaLocation.joinpath(ame_out_file))),
                                                    shlex.quote(tc),
                                                    shlex.quote(c_time),
@@ -298,26 +298,26 @@ class Transcode:
         if audio_channels == -1:
             return False
         elif audio_channels == 0:
-            encoder_string = '{}ffmpeg -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
+            encoder_string = '{} -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
                              '-c:v libx264 -pix_fmt yuv420p -preset medium -crf 22 -profile:v high ' \
                              '-x264opts "weightp=0:tff=1" ' \
                              '-write_tmcd 1 -gop_timecode {} -metadata creation_time={} -metadata timecode={} ' \
                              '-an ' \
-                             '-y -f mov {}'.format(self.c.ff_path,
+                             '-y -f mov {}'.format(self.c.ffm_path,
                                                    shlex.quote(str(input_file)),
                                                    shlex.quote(tc), shlex.quote(c_time), shlex.quote(tc),
                                                    shlex.quote(str(out_file)))
         elif audio_channels == 4:
             # c_filter = '[0:v]setpts=PTS-STARTPTS[v];[0:a:0][0:a:1]join=inputs=2:channel_layout=stereo[a]'
             c_filter = '[0:v]setpts=PTS-STARTPTS[v]'
-            encoder_string = '{}ffmpeg -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
+            encoder_string = '{} -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
                              '-filter_complex {} ' \
                              '-map [v] -map 0:a:0 -map 0:a:1 -map 0:a:2 -map 0:a:3 ' \
                              ' -c:v libx264 -pix_fmt yuv420p -preset medium -crf 22 -profile:v high ' \
                              '-x264opts "weightp=0:tff=1" ' \
                              '-write_tmcd 1 -gop_timecode {} -metadata creation_time={} -metadata timecode={} ' \
                              '-c:a aac -b:a 224k -ac 2 -ar 48000 ' \
-                             '-y -f mov {}'.format(self.c.ff_path,
+                             '-y -f mov {}'.format(self.c.ffm_path,
                                                    shlex.quote(str(input_file)),
                                                    shlex.quote(c_filter),
                                                    shlex.quote(tc),
@@ -325,12 +325,12 @@ class Transcode:
                                                    shlex.quote(tc),
                                                    shlex.quote(str(out_file)))
         else:
-            encoder_string = '{}ffmpeg -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
+            encoder_string = '{} -hide_banner -loglevel error -vsync 0 -i {} -c copy ' \
                              '-c:v libx264 -pix_fmt yuv420p -preset medium -crf 22 -profile:v high ' \
                              '-x264opts "weightp=0:tff=1" ' \
                              '-write_tmcd 1 -gop_timecode {} -metadata creation_time={} -metadata timecode={} ' \
                              '-c:a aac -b:a 224k -ac 2 -ar 48000 ' \
-                             '-y -f mov {}'.format(self.c.ff_path,
+                             '-y -f mov {}'.format(self.c.ffm_path,
                                                    shlex.quote(str(input_file)),
                                                    shlex.quote(tc),
                                                    shlex.quote(c_time),
