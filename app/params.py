@@ -25,6 +25,21 @@ class Conf:
             params = json.load(Path(self.ScriptPath, 'configuration.json').open('r'))
         except (FileNotFoundError, KeyError, json.decoder.JSONDecodeError):
             logging.error('Configuration file is broken or wrong path')
+            params = {
+                "adobe_media_encoder_host": "http://192.168.10.11:8080",
+                "path_to_ffmpeg": "/home/liveu/ffmpeg_nvidia/ffmpeg",
+                "path_to_ffprobe": "/home/liveu/ffmpeg_nvidia/ffprobe",
+                "transfer_server_host": "https://10.2.0.26:12194",
+                "scan_server_host": "https://10.2.0.30:12134",
+                "api_server_host": "https://10.2.0.20:12154",
+                "limit_files_number": 500,
+                "work_media_space": "ARCHIVE",
+                "work_files_location": "/mnt/ARCHIVE",
+                "temp_folder_name": "TEMP_TRANSFER"
+            }
+            with Path(self.ScriptPath, 'configuration.json').open('w', encoding='utf-8') as f:
+                json.dump(params, f, ensure_ascii=False, sort_keys=True, indent=4)
+            logging.error('Configuration file is broken or wrong path')
             sys.exit(1)
         else:
             env_config = AutoConfig(search_path=Path(self.ScriptPath, '.env'))
@@ -46,7 +61,9 @@ class Conf:
                 self.es_user = os.getenv('ES_USER')
                 self.es_pass = os.getenv('ES_PASS')
                 self.log_to_file = 0
-
+            if not self.db_host:
+                logging.error('No .env file found and no VENV translated to script !!!')
+                sys.exit(1)
             self.auth = (self.es_user, self.es_pass)
 
             self.LimitFiles = params['limit_files_number']
@@ -59,7 +76,6 @@ class Conf:
             self.srv_transfer = params['transfer_server_host']
             self.srv_scan = params['scan_server_host']
             self.srv_api = params['api_server_host']
-            self.os_win = params['host_operation_system_win']
             self.ScriptPath = Path(__file__).parent.parent.absolute()
 
             self.arc_compress = MySQLDatabase(

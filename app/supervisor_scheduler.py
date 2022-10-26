@@ -33,7 +33,7 @@ def scheduler():
     else:
         main_started = False
 
-    if now.hour == start_hour and now.minute in range(10, 15):
+    if now.hour == start_hour and now.minute in range(30, 35):
         if not helper_started:
             s = dict()
             for i in range(Services['nprocs']):
@@ -54,7 +54,7 @@ def scheduler():
 
 main_started = False
 helper_started = False
-start_hour = 14
+start_hour = 22
 
 Services = dict(main='main_mode', helper='helper_mode', nprocs=4)
 
