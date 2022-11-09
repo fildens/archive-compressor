@@ -369,6 +369,7 @@ class Transcode:
 def change_file_creation_time(path, created):
     if path.is_file():
         if sys.platform == "win32":
+            # pip install pypiwin32
             import win32file
             import pywintypes
 

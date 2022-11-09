@@ -207,7 +207,7 @@ def es_copy_file(item, file_id, dst_file):
 
 def es_search_files(date):
     url = f'{c.srv_api}/search'
-    data = {
+    data_base = {
         "combine": "MATCH_ALL",
         "filters": [
             {
@@ -248,7 +248,7 @@ def es_search_files(date):
             }
         ]
     }
-    data = {
+    data_tmp1 = {
         "combine": "MATCH_ALL",
         "filters": [
             {
@@ -300,6 +300,7 @@ def es_search_files(date):
             }
         ]
     }
+    data = data_base
     try:
         r = c.s_api.post(url, json=data, timeout=300)
         r.raise_for_status()
@@ -399,8 +400,8 @@ def main(table_name: str):
         else:
             return
     else:
-        # cache_id, results = es_search_files(date=table_name)
-        clip_ids, results = es_search_files(date='2021-08-12')
+        clip_ids, results = es_search_files(date=table_name)
+        # clip_ids, results = es_search_files(date='2022-08-12')
         db.create_sql_tables(table_name)
         c.ItemLength = build_search_results(clip_ids)
         message = f'MAIN MODE on {host}\nFor Date {table_name} found {c.ItemLength} files'

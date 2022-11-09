@@ -1,6 +1,7 @@
 /.DS_Store
 /Thumbs.db
 /LOGS
+/venv
 __pycache__
 /.idea
 /.env

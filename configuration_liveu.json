@@ -1,0 +1,12 @@
+{
+  "adobe_media_encoder_host": "http://192.168.10.11:8080",
+  "path_to_ffmpeg": "/home/liveu/ffmpeg_nvidia/ffmpeg",
+  "path_to_ffprobe": "/home/liveu/ffmpeg_nvidia/ffprobe",
+  "transfer_server_host": "https://10.2.0.26:12194",
+  "scan_server_host": "https://10.2.0.30:12134",
+  "api_server_host": "https://10.2.0.20:12154",
+  "limit_files_number": 2500,
+  "work_media_space": "ARCHIVE",
+  "work_files_location": "/mnt/ARCHIVE",
+  "temp_folder_name": "TEMP_TRANSFER"
+}
