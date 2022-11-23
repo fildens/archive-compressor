@@ -205,7 +205,10 @@ def es_copy_file(item, file_id, dst_file):
         logging.warning(f'Waiting time is over 10 min for {transfer_id}')
 
 
-def es_search_files(date):
+def es_search_files(date, shift=True):
+    if shift:
+        now = datetime.now()
+        date = f'{now.year - 1}-{now.month:02d}-{now.day:02d}'
     url = f'{c.srv_api}/search'
     data_base = {
         "combine": "MATCH_ALL",
@@ -308,9 +311,10 @@ def es_search_files(date):
         logging.error(f'Search request error: {repr(e_)}')
         return '', 0
     else:
-        clip_ids = [_['clip_id'] for _ in r.json()[:c.LimitFiles]]
+        clip_ids = [_['clip_id'] for _ in r.json()]
         logging.info(f'For {date} found {len(r.json())} files')
-        return clip_ids, len(r.json())
+        clip_ids.sort()
+        return clip_ids[:c.LimitFiles], len(r.json())
 
 
 def build_search_results(clip_ids):
