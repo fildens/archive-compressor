@@ -447,7 +447,7 @@ all_done = False
 db.proxy.connection()
 
 # Add the arguments to the parser
-ap.add_argument("--main", default=True,
+ap.add_argument("--main", default=False,
                 action='store_true', required=False,
                 help="Set MAIN mode. It should be only one in system! Default False - HELPER mode.")
 ap.add_argument("--ame", default=False,
