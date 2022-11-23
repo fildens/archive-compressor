@@ -316,7 +316,7 @@ class Transcode:
                              ' -c:v libx264 -pix_fmt yuv420p -preset medium -crf 22 -profile:v high ' \
                              '-x264opts "weightp=0:tff=1" ' \
                              '-write_tmcd 1 -gop_timecode {} -metadata creation_time={} -metadata timecode={} ' \
-                             '-c:a aac -b:a 224k -ac 2 -ar 48000 ' \
+                             '-c:a aac -b:a 224k -ac 1 -ar 48000 ' \
                              '-y -f mov {}'.format(self.c.ffm_path,
                                                    shlex.quote(str(input_file)),
                                                    shlex.quote(c_filter),
