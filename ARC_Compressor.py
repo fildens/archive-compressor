@@ -205,10 +205,7 @@ def es_copy_file(item, file_id, dst_file):
         logging.warning(f'Waiting time is over 10 min for {transfer_id}')
 
 
-def es_search_files(date, shift=True):
-    if shift:
-        now = datetime.now()
-        date = f'{now.year - 1}-{now.month:02d}-{now.day:02d}'
+def es_search_files(date):
     url = f'{c.srv_api}/search'
     data_base = {
         "combine": "MATCH_ALL",
@@ -312,7 +309,7 @@ def es_search_files(date, shift=True):
         return '', 0
     else:
         clip_ids = [_['clip_id'] for _ in r.json()]
-        logging.info(f'For {date} found {len(r.json())} files')
+        logging.info(f'For less then {date} found {len(r.json())} files')
         clip_ids.sort()
         return clip_ids[:c.LimitFiles], len(r.json())
 
@@ -387,7 +384,7 @@ def change_table(field, value, table_name=None):
     logging.warning(f'Table {table_name} changed.\n{number} rows for field "{field}" changed to "{value}"')
 
 
-def main(table_name: str):
+def main(table_name: str, date: str):
     db.proxy.connection()
     host = m.get_hostname()
     if c.HELPER_MODE:
@@ -404,11 +401,11 @@ def main(table_name: str):
         else:
             return
     else:
-        clip_ids, results = es_search_files(date=table_name)
+        clip_ids, results = es_search_files(date=date)
         # clip_ids, results = es_search_files(date='2022-08-12')
         db.create_sql_tables(table_name)
         c.ItemLength = build_search_results(clip_ids)
-        message = f'MAIN MODE on {host}\nFor Date {table_name} found {c.ItemLength} files'
+        message = f'MAIN MODE on {host}\nFor less then {date} found {c.ItemLength} files'
 
     m.sendmail(message=message, subject='START')
     logging.info(message)
@@ -450,7 +447,7 @@ all_done = False
 db.proxy.connection()
 
 # Add the arguments to the parser
-ap.add_argument("--main", default=False,
+ap.add_argument("--main", default=True,
                 action='store_true', required=False,
                 help="Set MAIN mode. It should be only one in system! Default False - HELPER mode.")
 ap.add_argument("--ame", default=False,
@@ -472,8 +469,10 @@ if c.AME:
         c.AME = False
 
 # change_table('in_work', False, '2022-08-31')
-
 last_table_name = sorted(db.proxy.get_tables(), reverse=True)[0]
+
+now = datetime.now()
+search_date = f'{now.year}-{(now.month - 9):02d}-{now.day:02d}'
 current_table_name = datetime.strftime(datetime.now(), '%Y-%m-%d')
 # last_table_name = current_table_name = '2022-08-17'
 
@@ -481,9 +480,9 @@ if last_table_name == current_table_name:
     c.HELPER_MODE = True
 
 if c.HELPER_MODE:
-    main(last_table_name)
+    main(last_table_name, search_date)
 else:
-    all_done = main(current_table_name)
+    all_done = main(current_table_name, search_date)
     if not all_done and not c.stop_service:
         c.HELPER_MODE = True
         try:
@@ -493,6 +492,6 @@ else:
             c.AME = False
         else:
             c.AME = True
-        main(current_table_name)
+        main(current_table_name, search_date)
 # ARC_Compressor.py --main --ame
 # it set helper=False and ame=True
