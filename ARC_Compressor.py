@@ -230,15 +230,6 @@ def es_search_files(date):
             },
             {
                 "field": {
-                    "fixed_field": "STATUS",
-                    "group": "SEARCH_FILES",
-                    "type": "QString"
-                },
-                "match": "EQUAL_TO",
-                "search": "online"
-            },
-            {
-                "field": {
                     "fixed_field": "CREATED",
                     "group": "SEARCH_FILES",
                     "type": "QDate"
@@ -336,6 +327,7 @@ def build_search_results(clip_ids):
             logging.error(f'Get cached search request error: {repr(e__)}')
         else:
             item = dict(clip_id=clip_id, data=r.json())
+            print(r.json())
 
             if db.ErrorsBase.select().where(db.ErrorsBase.clip_id == item['clip_id']) or \
                     'Offline' in item['data']['video'][0]['file']['status_text']:
@@ -494,4 +486,3 @@ else:
             c.AME = True
         main(current_table_name, search_date)
 # ARC_Compressor.py --main --ame
-# it set helper=False and ame=True

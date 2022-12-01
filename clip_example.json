@@ -1,0 +1,200 @@
+{
+  "asset": {
+    "asset_id": 4195383,
+    "asset_type": 3,
+    "asset_type_id": 2895906,
+    "asset_type_text": "clip",
+    "comment": "Центр занятости",
+    "custom": {
+      "field_1": "Исходник",
+      "field_10": false,
+      "field_11": "Карпов Николай",
+      "field_12": false,
+      "field_13": "АРХИВИРОВАТЬ",
+      "field_15": false,
+      "field_17": false,
+      "field_19": "Итоги дня",
+      "field_2": "Багин Алексей",
+      "field_3": "Карпов Николай",
+      "field_4": "Центр занятости",
+      "field_5": "ул. Бабушкина",
+      "field_6": "СНХ Людмила Сергеевна, заместитель руководителя агентства занятости населения Невского района ",
+      "field_7": "Агентство занятости служба занятости населения невского района ",
+      "field_8": "2020-01-30",
+      "field_9": false
+    },
+    "customtypes": {
+      "field_1": "QString",
+      "field_10": "bool",
+      "field_11": "QString",
+      "field_12": "bool",
+      "field_13": "QString",
+      "field_15": "bool",
+      "field_17": "bool",
+      "field_19": "QString",
+      "field_2": "QString",
+      "field_3": "QString",
+      "field_4": "QString",
+      "field_5": "QString",
+      "field_6": "QString",
+      "field_7": "QString",
+      "field_8": "QDate",
+      "field_9": "bool"
+    },
+    "last_modified": "2022-11-15T09:54:06Z",
+    "origin_site": {
+      "hostname": "es-lnsp-flow-admin2",
+      "is_local": false,
+      "label": "es-lnsp-flow-admin2",
+      "site_id": 1,
+      "uuid": "1de63650-f0dc-4115-ae66-5ce18f6ad8a1"
+    },
+    "revision": 9,
+    "thumbnail": "dac61d04-f8e0-4853-a0b9-003991c29773.png",
+    "thumbnail_path": "images/images-73/dac61d04-f8e0-4853-a0b9-003991c29773.png",
+    "uuid": "3381d275-8289-4860-9e92-7a0ed98663f2"
+  },
+  "audio": [
+    {
+      "bit_depth": 16,
+      "channel": 0,
+      "clip_id": 2895906,
+      "compression": "pcm16le",
+      "essence_id": 8665305,
+      "file_id": 3353330,
+      "sample_rate": 48000,
+      "track": 2
+    },
+    {
+      "bit_depth": 16,
+      "channel": 1,
+      "clip_id": 2895906,
+      "compression": "pcm16le",
+      "essence_id": 8665306,
+      "file_id": 3353330,
+      "sample_rate": 48000,
+      "track": 3
+    },
+    {
+      "bit_depth": 16,
+      "channel": 2,
+      "clip_id": 2895906,
+      "compression": "pcm16le",
+      "essence_id": 8665307,
+      "file_id": 3353330,
+      "sample_rate": 48000,
+      "track": 4
+    },
+    {
+      "bit_depth": 16,
+      "channel": 3,
+      "clip_id": 2895906,
+      "compression": "pcm16le",
+      "essence_id": 8665308,
+      "file_id": 3353330,
+      "sample_rate": 48000,
+      "track": 5
+    }
+  ],
+  "capture": {
+    "capture_id": 2205299,
+    "chunk_group_id": 2204674,
+    "chunk_group_index": 0,
+    "chunk_group_uuid": "968fd740-b322-451c-b415-15e9147e75ae",
+    "project": "2020/01/05/30",
+    "recording_id": "3659f62d-27eb-4a59-8965-980760c5c840",
+    "source": "",
+    "tape": "200130_155546_627"
+  },
+  "clip_id": 2895906,
+  "display_aspect_ratio": "16:9",
+  "display_audio": "A1-A4, 16 bit, WAV, 48.000 kHz",
+  "display_filesize": "2.73 GB",
+  "display_filetype": "mxfop1a",
+  "display_frame_rate": "25 fps",
+  "display_name": "200130_155546_627_492_9243",
+  "display_standard": "1080i25",
+  "display_video_codec": "XDCAM-EX 35Mb 1080i",
+  "display_video_size": "1920 x 1080",
+  "has_audio": true,
+  "has_data": false,
+  "has_index_file": false,
+  "has_video": true,
+  "is_recording": false,
+  "metadata": {
+    "captured": "2020-01-30T07:50:36Z",
+    "clip_name": "200130_155546_627_492_9243",
+    "clip_name_with_extension": "200130_155546_627_492_9243.mxfop1a",
+    "metadata_id": 2895239,
+    "metadata_uuid": "51a5c1aa-47c6-4c82-a04f-127151763b8f",
+    "modified": "2020-01-30T12:57:18Z",
+    "scene": "",
+    "take": "",
+    "timecode_end": "13:22:03:23:25/1",
+    "timecode_in": null,
+    "timecode_out": null,
+    "timecode_start": "13:11:49:20:25/1"
+  },
+  "mob_ids": {
+    "audio_tracks": [
+      "6687a953-7888-05dd-009d-6bfffeb4b3af",
+      "6687a953-7888-05dd-009d-6bfffeb4b3af",
+      "6687a953-7888-05dd-009d-6bfffeb4b3af",
+      "6687a953-7888-05dd-009d-6bfffeb4b3af"
+    ],
+    "master": "6587a953-7888-05dd-009d-6bfffeb4b3af",
+    "video_tracks": [
+      "6687a953-7888-05dd-009d-6bfffeb4b3af"
+    ]
+  },
+  "status_text": "Online",
+  "video": [
+    {
+      "aspect_ratio": "16:9",
+      "channel": -1,
+      "clip_id": 2895906,
+      "data_rate": 35000,
+      "dominance": "top field first",
+      "encoding_id": 408,
+      "essence_id": 2886367,
+      "file": {
+        "display_filesize": "2.73 GB",
+        "display_filetype": "mxfop1a",
+        "display_name": "200130_155546_627_492_9243",
+        "file": {
+          "created": "2020-03-30T22:51:06Z",
+          "file_id": 3353330,
+          "filesize": 2936038972,
+          "hash": "2:5fbd7dda9ee3de2c049a55deb761c1ab",
+          "is_placeholder": false,
+          "modified": "2020-01-30T12:57:18Z",
+          "type": "mxfop1a"
+        },
+        "gone_locations": [
+          {
+            "archive": false,
+            "file_id": 3353330,
+            "media_space_location_id": 6604622,
+            "media_space_name": "ARCHIVE",
+            "media_space_uuid": "2d9bf31b-d1b6-4dcf-8e35-1e58fa3cb9c4",
+            "username": "",
+            "userpath": "200130_155546_627_492_9243.MXF"
+          }
+        ],
+        "status_text": "Offline"
+      },
+      "file_id": 3353330,
+      "fourcc": "xdvc",
+      "frame_rate": "25/1",
+      "gop_length": 0,
+      "height": 1080,
+      "is_image_sequence": false,
+      "timecode_duration": "00:10:14:04:25/1",
+      "timecode_end": "13:22:03:23:25/1",
+      "timecode_start": "13:11:49:20:25/1",
+      "track": 1,
+      "video_codec": "XDCAM-EX 35Mb 1080i",
+      "width": 1920
+    }
+  ]
+}
