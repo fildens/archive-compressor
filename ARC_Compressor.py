@@ -327,7 +327,7 @@ def build_search_results(clip_ids):
             logging.error(f'Get cached search request error: {repr(e__)}')
         else:
             item = dict(clip_id=clip_id, data=r.json())
-            print(r.json())
+            # print(r.json())
 
             if db.ErrorsBase.select().where(db.ErrorsBase.clip_id == item['clip_id']) or \
                     'Offline' in item['data']['video'][0]['file']['status_text']:
