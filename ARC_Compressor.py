@@ -6,7 +6,7 @@ import logging
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from os.path import relpath
 from pathlib import Path
 from threading import Thread
@@ -21,6 +21,7 @@ from app.params import Conf
 from app.transcode import Transcode
 from extlib.logger import Logger
 from extlib import LegalPath
+from dateutil.relativedelta import relativedelta
 
 c = Conf()
 m = Msg(c)
@@ -464,7 +465,8 @@ if c.AME:
 last_table_name = sorted(db.proxy.get_tables(), reverse=True)[0]
 
 now = datetime.now()
-search_date = f'{now.year}-{(now.month - 9):02d}-{now.day:02d}'
+sdt = now - relativedelta(months=9)
+search_date = f'{sdt.year}-{sdt.month:02d}-{sdt.day:02d}'
 current_table_name = datetime.strftime(datetime.now(), '%Y-%m-%d')
 # last_table_name = current_table_name = '2022-08-17'
 
