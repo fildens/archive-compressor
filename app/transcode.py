@@ -285,6 +285,7 @@ class Transcode:
         input_file = self.c.MediaLocation.joinpath(input_file)
         out_file = self.c.MediaLocation.joinpath(out_file)
         c_time = datetime.strftime(date_for_change, '%Y-%m-%d %H:%M:%S')
+        logging.debug(f'!!!!!!!!!!!!!!!!! for file "{out_file}" ctime={c_time}')
 
         logging.info('{}/{} Transcode starting'.format(self.i, self.c.ItemLength))
         if Path(out_file).exists():

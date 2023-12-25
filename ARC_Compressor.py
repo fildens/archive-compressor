@@ -28,7 +28,7 @@ m = Msg(c)
 
 c.ScriptName = Path(__file__).stem
 
-L = Logger(c.ScriptName, c.ScriptPath, sql=False, err_log=True)
+L = Logger(c.ScriptName, c.ScriptPath, level='DEBUG', sql=False, err_log=True)
 logger = L.build()
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

@@ -226,6 +226,8 @@ class Insert:
         except KeyError:
             item['data']['asset']['custom']['field_4'] = item['data']['metadata']['clip_name']
 
+        logging.debug(f"????????????????? for file \"{new_file}\" ctime={item['data']['asset']['custom']['field_8']}")
+
         metadata = {
             "createproxy": "true",
             "files": [new_file],
