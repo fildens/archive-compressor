@@ -91,7 +91,8 @@ class Transcode:
         for j in range(2):
             file = files[j]
             if file.exists():
-                chk_string = '{} -v quiet -print_format json -show_streams {}'.format(self.c.ffp_path, shlex.quote(str(file)))
+                chk_string = '{} -v quiet -print_format json -show_streams {}'.format(self.c.ffp_path,
+                                                                                      shlex.quote(str(file)))
                 _args = shlex.split(chk_string)
                 try:
                     p = subprocess.run(_args, capture_output=True)
@@ -118,30 +119,17 @@ class Transcode:
         timecode = item['data']['video'][0]['timecode_start']
 
         # ___________________ detect time to reset __________________
+        captured_dt = datetime.strptime(item['data']['metadata']['captured'], '%Y-%m-%dT%H:%M:%SZ')
         try:
-            action_date = item['data']['asset']['custom']['field_8']
+            action_date_dt = datetime.strptime(item['data']['asset']['custom']['field_8'], '%Y-%m-%d')
         except BaseException as e:
-            logging.debug(e)
-            action_date = '2100-01-01'
-        else:
-            if not action_date:
-                action_date = '2100-01-01'
-        action_date_dt = datetime.strptime(action_date, '%Y-%m-%d')
-
-        captured = item['data']['metadata']['captured']
-        captured_dt = datetime.strptime(captured, '%Y-%m-%dT%H:%M:%SZ')
-
-        if action_date_dt.date() < captured_dt.date():
-            if action_date_dt.year in range(2015, datetime.now().year):
-                action_dt = datetime.combine(action_date_dt.date(), captured_dt.time())
-                date_for_change = action_dt
-            else:
-                date_for_change = captured_dt
-        elif captured_dt.year in range(2015, datetime.now().year):
+            logging.debug(repr(e))
             date_for_change = captured_dt
         else:
-            action_dt = datetime.combine(action_date_dt.date(), captured_dt.time())
-            date_for_change = action_dt
+            if action_date_dt.year in range(2015, datetime.now().year):
+                date_for_change = datetime.combine(action_date_dt.date(), captured_dt.time())
+            else:
+                date_for_change = captured_dt
         # ___________________________________________________________________________________________________
 
         logging.info(
